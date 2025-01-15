@@ -1,6 +1,21 @@
-import React from "react";
+import React, {useState} from "react";
 
 function Search() {
+const [search, setSearch] = useState('');
+const [weatherData, setWeatherData] = useState(null);
+  
+  const handleSearch = async() => {
+    try {
+    const response = await fetch(`https://api.weatherbit.io/v2.0/current?city=${search}&key=${import.meta.env.VITE_WEATHER_API_KEY}`);
+    const data = await response.json();
+    setWeatherData(data);
+    console.log(data);
+    
+    } catch (error) {
+      console.log('error fetching data', error);
+    }
+  }
+
   return (
     <>
       <div className="h-16 bg-indigo-700 flex items-center justify-center">
@@ -23,8 +38,10 @@ function Search() {
             type="text"
             placeholder="Search"
             className="w-96 h-10 rounded-l-md bg-white outline-none pl-10 pr-3"
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
           />
-          <button className="h-10 px-4 bg-blue-500 text-white rounded-r-md hover:bg-blue-600">
+          <button onClick={handleSearch} className="h-10 px-4 bg-blue-500 text-white rounded-r-md hover:bg-blue-600">
             Search
           </button>
         </div>

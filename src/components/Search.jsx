@@ -6,7 +6,7 @@ const [weatherData, setWeatherData] = useState(null);
   
   const handleSearch = async() => {
     try {
-    const response = await fetch(`https://api.weatherbit.io/v2.0/current?city=${search}&key=${import.meta.env.VITE_WEATHER_API_KEY}`);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${import.meta.env.VITE_WEATHER_API_KEY}`);
     const data = await response.json();
     setWeatherData(data);
     console.log(data);

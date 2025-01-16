@@ -1,25 +1,31 @@
 import React, {useState} from "react";
+import { getWeather } from '../services/weatherService';
 
-function Search() {
+function Search({ onWeatherData }) {
 const [search, setSearch] = useState('');
-const [weatherData, setWeatherData] = useState(null);
-  
+const [error, setError] = useState(null);
+const [isLoading, setIsLoading] = useState(false);
+
   const handleSearch = async() => {
-    try {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${import.meta.env.VITE_WEATHER_API_KEY}`);
-    const data = await response.json();
-    setWeatherData(data);
-    console.log(data);
+    if(!search.trim()) return;
     
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getWeather(search);
+      onWeatherData(data);
     } catch (error) {
-      console.log('error fetching data', error);
-    }
-  }
+      setError("error resolving that search");
+      console.error("error: ",error);
+    } finally {
+      setIsLoading(false);
+    }     
+  }  
 
   return (
     <>
       <div className="h-16 bg-indigo-700 flex items-center justify-center">
-        <div className="relative flex items-center">
+        {<div className="relative flex items-center">
           <svg
             className="absolute left-3 w-5 h-5 text-gray-400"
             xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +50,9 @@ const [weatherData, setWeatherData] = useState(null);
           <button onClick={handleSearch} className="h-10 px-4 bg-blue-500 text-white rounded-r-md hover:bg-blue-600">
             Search
           </button>
-        </div>
+        </div>}
+        {isLoading && <span className="ml-2 text-white">Loading...</span>}
+        {error && <span className="ml-2 text-red-500">{error}</span>}
       </div>
     </>
   );
